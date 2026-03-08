@@ -381,7 +381,8 @@ NSString * const BCKCodeDrawingSuppressQuietZones = @"BCKCodeDrawingSuppressQuie
 	}
 	
 	NSDictionary *attributes = @{(id)kCTParagraphStyleAttributeName: CFBridgingRelease(paragraphStyle),
-								 (id)kCTFontAttributeName: CFBridgingRelease(font)};
+								 (id)kCTFontAttributeName: CFBridgingRelease(font),
+								 (id)kCTForegroundColorFromContextAttributeName: @YES};
 	
 	return [[NSAttributedString alloc] initWithString:text attributes:attributes];
 }
