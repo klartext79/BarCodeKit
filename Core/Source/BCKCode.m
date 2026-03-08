@@ -36,6 +36,7 @@ NSString * const BCKCodeDrawingReduceBleedOption = @"BCKCodeDrawingReduceBleed";
 NSString * const BCKCodeDrawingSizeWidthOption = @"BCKCodeDrawingSizeWidthOption";
 NSString * const BCKCodeDrawingSizeHeightOption = @"BCKCodeDrawingSizeHeightOption";
 NSString * const BCKCodeDrawingSuppressQuietZones = @"BCKCodeDrawingSuppressQuietZones";
+NSString * const BCKCodeDrawingForegroundColorOption = @"color";
 
 #define ENCODE_ERROR_MESSAGE @"BCKCode is an abstract class that cannot encode anything"
 
@@ -478,6 +479,20 @@ NSString * const BCKCodeDrawingSuppressQuietZones = @"BCKCodeDrawingSuppressQuie
 }
 
 
+#if TARGET_OS_OSX
+- (NSColor *)_colorFromOptions:(NSDictionary *)options
+{
+	NSColor *color = [options objectForKey:BCKCodeDrawingForegroundColorOption];
+	return color ?: [NSColor blackColor];
+}
+#else
+- (UIColor *)_colorFromOptions:(NSDictionary *)options
+{
+	UIColor *color = [options objectForKey:BCKCodeDrawingForegroundColorOption];
+	return color ?: [UIColor blackColor];
+}
+#endif
+
 - (CGFloat)_barcodeWidthFromOptions:(NSDictionary *)options
 {
 	NSNumber *barWidth = [options objectForKey:BCKCodeDrawingSizeWidthOption];
@@ -595,7 +610,7 @@ NSString * const BCKCodeDrawingSuppressQuietZones = @"BCKCodeDrawingSuppressQuie
 	CGContextRestoreGState(context);
 }
 
-- (void)_drawCaptionText:(NSString *)text fontName:fontName fontSize:(CGFloat)fontSize alignment:(NSTextAlignment)alignment inRect:(CGRect)rect context:(CGContextRef)context
+- (void)_drawCaptionText:(NSString *)text fontName:fontName fontSize:(CGFloat)fontSize alignment:(NSTextAlignment)alignment inRect:(CGRect)rect context:(CGContextRef)context options:(NSDictionary *)options
 {
 	if (![text length])
 	{
@@ -651,6 +666,7 @@ NSString * const BCKCodeDrawingSuppressQuietZones = @"BCKCodeDrawingSuppressQuie
 	CGContextSetTextPosition(context, x, y);
 	
 	// draw the text line
+	CGContextSetFillColorWithColor(context, [[self _colorFromOptions:options] CGColor]);
 	CTLineDraw(line, context);
 	
 	CGContextRestoreGState(context);
@@ -884,7 +900,7 @@ NSString * const BCKCodeDrawingSuppressQuietZones = @"BCKCodeDrawingSuppressQuie
 	// paint all bars
 	
    //CGContextSaveGState(context);
-	CGContextSetGrayFillColor(context, 0, 1);
+	CGContextSetFillColorWithColor(context, [[self _colorFromOptions:options] CGColor]);
    //CGContextSetShouldAntialias(context, NO);
 	CGContextFillPath(context);
 	//CGContextRestoreGState(context);
@@ -963,22 +979,22 @@ NSString * const BCKCodeDrawingSuppressQuietZones = @"BCKCodeDrawingSuppressQuie
 			// Draw Captions
 			if (leftDigits)
 			{
-                [self _drawCaptionText:leftDigits fontName:fontName fontSize:optimalCaptionFontSize alignment:NSTextAlignmentCenter inRect:leftNumberFrame context:context];
+                [self _drawCaptionText:leftDigits fontName:fontName fontSize:optimalCaptionFontSize alignment:NSTextAlignmentCenter inRect:leftNumberFrame context:context options:options];
 			}
 			
 			if (rightDigits)
 			{
-				[self _drawCaptionText:rightDigits fontName:fontName fontSize:optimalCaptionFontSize alignment:NSTextAlignmentCenter inRect:rightNumberFrame context:context];
+				[self _drawCaptionText:rightDigits fontName:fontName fontSize:optimalCaptionFontSize alignment:NSTextAlignmentCenter inRect:rightNumberFrame context:context options:options];
 			}
 			
 			if (leftQuietZoneText)
 			{
-				[self _drawCaptionText:leftQuietZoneText fontName:fontName fontSize:optimalCaptionFontSize alignment:NSTextAlignmentRight inRect:leftQuietZoneNumberFrame context:context];
+				[self _drawCaptionText:leftQuietZoneText fontName:fontName fontSize:optimalCaptionFontSize alignment:NSTextAlignmentRight inRect:leftQuietZoneNumberFrame context:context options:options];
 			}
-			
+
 			if (rightQuietZoneText)
 			{
-				[self _drawCaptionText:rightQuietZoneText fontName:fontName fontSize:optimalCaptionFontSize alignment:NSTextAlignmentLeft inRect:rightQuietZoneNumberFrame context:context];
+				[self _drawCaptionText:rightQuietZoneText fontName:fontName fontSize:optimalCaptionFontSize alignment:NSTextAlignmentLeft inRect:rightQuietZoneNumberFrame context:context options:options];
 			}
 		}
 		else
@@ -1034,17 +1050,17 @@ NSString * const BCKCodeDrawingSuppressQuietZones = @"BCKCodeDrawingSuppressQuie
 			
 			if (text)
 			{
-				[self _drawCaptionText:text fontName:fontName fontSize:[self _captionFontSizeWithOptions:options] alignment:NSTextAlignmentCenter inRect:frameBetweenEndMarkers context:context];
+				[self _drawCaptionText:text fontName:fontName fontSize:[self _captionFontSizeWithOptions:options] alignment:NSTextAlignmentCenter inRect:frameBetweenEndMarkers context:context options:options];
 			}
-			
+
 			if (leftQuietZoneText)
 			{
-				[self _drawCaptionText:leftQuietZoneText fontName:fontName fontSize:optimalCaptionFontSize alignment:NSTextAlignmentRight inRect:leftQuietZoneNumberFrame context:context];
+				[self _drawCaptionText:leftQuietZoneText fontName:fontName fontSize:optimalCaptionFontSize alignment:NSTextAlignmentRight inRect:leftQuietZoneNumberFrame context:context options:options];
 			}
-			
+
 			if (rightQuietZoneText)
 			{
-				[self _drawCaptionText:rightQuietZoneText fontName:fontName fontSize:optimalCaptionFontSize alignment:NSTextAlignmentLeft inRect:rightQuietZoneNumberFrame context:context];
+				[self _drawCaptionText:rightQuietZoneText fontName:fontName fontSize:optimalCaptionFontSize alignment:NSTextAlignmentLeft inRect:rightQuietZoneNumberFrame context:context options:options];
 			}
 		}
 	}

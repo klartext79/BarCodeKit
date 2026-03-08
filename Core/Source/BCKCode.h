@@ -23,6 +23,7 @@ extern NSString * const BCKCodeDrawingReduceBleedOption;
 extern NSString * const BCKCodeDrawingSizeWidthOption;
 extern NSString * const BCKCodeDrawingSizeHeightOption;
 extern NSString * const BCKCodeDrawingSuppressQuietZones;
+extern NSString * const BCKCodeDrawingForegroundColorOption;
 
 /**
  Caption Zones
@@ -200,6 +201,7 @@ typedef NS_ENUM(NSUInteger, BCKCodeDrawingCaption)
  - **BCKCodeDrawingSizeWidthOption** - Specify width of the barcode image
  - **BCKCodeDrawingSizeHeightOption** - Specify height of the barcode image
  - **BCKCodeDrawingSuppressQuietZones** - Enable/disable quite zones of the barcode
+ - **BCKCodeDrawingForegroundColorOption** - The foreground color for bars and caption text (default: black). Pass an NSColor (macOS) or UIColor (iOS).
  
  */
 @interface BCKCode : NSObject <BCKCoding>
